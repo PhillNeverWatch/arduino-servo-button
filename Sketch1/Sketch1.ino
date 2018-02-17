@@ -1,15 +1,32 @@
-/*
- Name:		Sketch1.ino
- Created:	15.02.2018 12:33:28
- Author:	Philipp
-*/
+#include <Servo.h>
 
-// the setup function runs once when you press reset or power the board
-void setup() {
+Servo theServo; 				
 
+int pos = 10;    
+int pushButton = 2;
+int clicks = 0;
+
+void setup()
+{
+	Serial.begin(9600);
+	theServo.attach(9);  
+	pinMode(pushButton, INPUT_PULLUP);	
 }
 
-// the loop function runs over and over again until power down or reset
 void loop() {
-  
+	int buttonState = digitalRead(pushButton);
+	if (buttonState == 0 && pos <= 160) {
+		clicks = clicks + 1;
+		Serial.print("Clicks: ");
+		Serial.println(clicks);
+		pos = map(clicks, 0, 29, 15, 160);
+		theServo.write(pos);              
+		delay(100);
+	}
+	else if (buttonState == 0) {
+		theServo.write(0);   
+		clicks = 0;
+		pos = 10;
+		delay(100);
+	}
 }
